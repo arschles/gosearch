@@ -10,6 +10,15 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+// for next time
+// - make a UI for all this stuff!
+// - caching the results for a few mins or something?
+// - maybe proactively getting search results in the background
+// - doing image, video, etc... search?
+// - deploy this to the actual internet
+//		- rate limiting will be needed
+// - WRITE OUR OWN CRAWLER!!!
+
 // const bingEndpoint = "https://gosearch.cognitiveservices.azure.com/bing/v7.0"
 const bingEndpoint = "https://api.cognitive.microsoft.com/bing/v7.0/search"
 
