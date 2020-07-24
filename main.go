@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -14,24 +13,24 @@ import (
 // const bingEndpoint = "https://gosearch.cognitiveservices.azure.com/bing/v7.0"
 const bingEndpoint = "https://api.cognitive.microsoft.com/bing/v7.0/search"
 
-type result struct {
-	Name string `json:"name"`
-	URL  string `json:"url"`
-}
-type queryResults struct {
-	ResultList []result `json:"results"`
-}
-
-func (q *queryResults) appendResult(name, url string) {
-	q.ResultList = append(q.ResultList, result{
-		Name: name,
-		URL:  url,
-	})
-}
-
 // localhost:123/api/search?term=thing
 
 func newSearchHandler(token string) echo.HandlerFunc {
+	type result struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	}
+	type queryResults struct {
+		ResultList []result `json:"results"`
+	}
+
+	appendResult := func(results *queryResults, name, url string) {
+		results.ResultList = append(results.ResultList, result{
+			Name: name,
+			URL:  url,
+		})
+	}
+
 	return func(ctx echo.Context) error {
 		term := ctx.QueryParam("term")
 		if term == "" {
@@ -77,15 +76,6 @@ func newSearchHandler(token string) echo.HandlerFunc {
 
 		// Close the response.
 		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return newError(
-				ctx,
-				http.StatusInternalServerError,
-				"%s",
-				err,
-			)
-		}
 
 		// Create a new answer.
 		ans := &BingAnswer{} // same thing as new(BingAnswer)
@@ -96,8 +86,8 @@ func newSearchHandler(token string) echo.HandlerFunc {
 		// passes in a pointer to a pointer - we should just be
 		// passing in a pointer.
 		// err = json.Unmarshal(body, &ans)
-		err = json.Unmarshal(body, ans)
-		if err != nil {
+
+		if err := json.NewDecoder(resp.Body).Decode(ans); err != nil {
 			return newError(
 				ctx,
 				http.StatusInternalServerError,
@@ -111,7 +101,8 @@ func newSearchHandler(token string) echo.HandlerFunc {
 		// result name and URL.
 		for _, result := range ans.WebPages.Value {
 			if result.IsFamilyFriendly {
-				results.appendResult(
+				appendResult(
+					results,
 					result.Name,
 					result.URL,
 				)
