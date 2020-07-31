@@ -22,7 +22,7 @@ import (
 // const bingEndpoint = "https://gosearch.cognitiveservices.azure.com/bing/v7.0"
 const bingEndpoint = "https://api.cognitive.microsoft.com/bing/v7.0/search"
 
-// localhost:123/api/search?term=thing
+//  curl "localhost:8080/api/search?term=thing"
 
 func newSearchHandler(token string) echo.HandlerFunc {
 	type result struct {
