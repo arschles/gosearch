@@ -1,37 +1,44 @@
 <script>
+	import { onMount } from 'svelte';
 	let term;
+	let results = [];
+	let errorMsg;
 	async function doSearch() {
+		console.log("doSearch");
 		if(term == "") {
+			errorMsg = "Select a term";
 			return; // TODO: error somewhere?
 		}
 		let url = `/api/search?term=${term}`
 		let rawResponse = await fetch(url);
-		// let dbPromise = connectToDB()
-		// // this code executes even before the DB is connected
-		// dbPromise.then(() => {
-		// 	//this code executes only after the DB is connected
-		// }
-		let jsonResponse = rawResponse.json();
-		let results = jsonResponse["results"];
-		for(result in results) {
-			// TODO: what should we do now?
-		}
-		// 1. get the search term from the input box.
-		// 		I think there's some way to bind the valuje of the
-		//		input box to a JS var
-		// 2. make the call to /api/search?term
-		// 3. render the results - use a new svelte component
+		let jsonResponse = await rawResponse.json();
+		results = jsonResponse["results"];
 	}
 </script>
 
 <main>
 	<h1>WORKING TITLE??? We're not ready to commit</h1>
+
+	{#if errorMsg }
+	<div style="color:red">{errorMsg}</div>
+	{/if}
+
+	<form on:submit|preventDefault={doSearch}>
 	<input type="text" bind:value={term} />
 	<!--
 		TODO: need to make it do the search if you also press
 		enter in the search box
 	-->
-	<button on:click={doSearch}>I'm feeling search-ey</button>
+
+	<button type="submit">I'm feeling search-ey</button>
+	</form>
+	<div id="results" class="list-of-results">
+	{#each results as result, i}
+		<div class="result" id="result{i}">
+			<a href="{result.url}">{result.name}</a>
+		</div>
+	{/each}
+	</div>
 </main>
 
 <style>
