@@ -57,7 +57,6 @@ func main() {
 	// TODOs:
 	//
 	// - figure out what's going on with ACI deploy!
-	// - get a favicon (https://i.imgur.com/YbHs016.png courtesy rockerBO)
 	// - Need to "fingerprint" the JS and CSS files to
 	// 	ensure the browser doesn't cache them after I make
 	// 	a change
@@ -74,6 +73,10 @@ func main() {
 	// 	to the right of the search results
 	// - build the image in ACR tasks and host it in ACR
 	// - Get a better DNS for the hostname (we have the ACI hostname now, and we have the front door gosearching.azurefd.net one)
+
+	// DONE
+	// - get a favicon (https://i.imgur.com/YbHs016.png courtesy rockerBO)
+
 	e.Static("/static", "frontend/public/build")
 
 	e.GET("/", func(c echo.Context) error {
