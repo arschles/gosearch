@@ -26,6 +26,13 @@ func main() {
 	if token == "" {
 		log.Fatal("BING_SEARCH_KEY not found")
 	}
+
+	disableCache := false
+	prod := os.Getenv("PROD")
+	if prod == "true" {
+		disableCache = true
+	}
+
 	// Echo instance
 	e := echo.New()
 	e.Renderer = echoview.New(goview.Config{
@@ -34,7 +41,7 @@ func main() {
 		Master:    "layouts/base",
 		Funcs:     make(map[string]interface{}),
 		// TODO: set DisableCache to false when in production
-		DisableCache: true,
+		DisableCache: disableCache,
 		Delims: goview.Delims{
 			Left:  "{{",
 			Right: "}}",
