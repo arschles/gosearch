@@ -22,7 +22,7 @@ dockerpush: dockerbuild
 
 .PHONY: acideploy
 acideploy: dockerpush
-	az container create -g twitch -n gosearch --image arschles/gosearch:$(GIT_SHA) --dns-name-label=gosearch --environment-variables BING_SEARCH_KEY=${BING_SEARCH_KEY} --ports 8080
+	az container create -g twitch -n gosearch --image arschles/gosearch:$(GIT_SHA) --dns-name-label=gosearch --environment-variables BING_SEARCH_KEY=${BING_SEARCH_KEY} PROD="prod" --ports 8080
 	az container restart -n gosearch -g twitch
 
 .PHONY: acilogs

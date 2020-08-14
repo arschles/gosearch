@@ -19,8 +19,8 @@ FROM alpine:3.11.5
 
 RUN mkdir /bin/gosearch
 COPY --from=builder /bin/gosearch /bin/gosearch/gosearch
-COPY --from=builder /etc/views /bin/gosearch/views
-COPY --from=builder /etc/frontend/public/build /bin/gosearch/frontend/public/build
+COPY --from=builder /etc/views /views
+COPY --from=builder /etc/frontend/public/build /frontend/public/build
 
 EXPOSE 3000
 

@@ -73,6 +73,7 @@ func main() {
 	//	tries to guess something quick that you want & puts it just
 	// 	to the right of the search results
 	// - build the image in ACR tasks and host it in ACR
+	// - Get a better DNS for the hostname (we have the ACI hostname now, and we have the front door gosearching.azurefd.net one)
 	e.Static("/static", "frontend/public/build")
 
 	e.GET("/", func(c echo.Context) error {
