@@ -29,7 +29,7 @@ func main() {
 	// Echo instance
 	e := echo.New()
 	e.Renderer = echoview.New(goview.Config{
-		Root:      "./views",
+		Root:      "views",
 		Extension: ".html",
 		Master:    "layouts/base",
 		Funcs:     make(map[string]interface{}),
@@ -49,6 +49,8 @@ func main() {
 
 	// TODOs:
 	//
+	// - figure out what's going on with ACI deploy!
+	// - get a favicon (https://i.imgur.com/YbHs016.png courtesy rockerBO)
 	// - Need to "fingerprint" the JS and CSS files to
 	// 	ensure the browser doesn't cache them after I make
 	// 	a change
@@ -63,6 +65,7 @@ func main() {
 	// - duckduckgo-style (google/bing/etc... does it too) "smart sidebar"
 	//	tries to guess something quick that you want & puts it just
 	// 	to the right of the search results
+	// - build the image in ACR tasks and host it in ACR
 	e.Static("/static", "frontend/public/build")
 
 	e.GET("/", func(c echo.Context) error {
