@@ -2,13 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
+	"github.com/arschles/gosearch/bing"
 	"github.com/labstack/echo/v4"
 )
-
-// const bingEndpoint = "https://gosearch.cognitiveservices.azure.com/bing/v7.0"
-const bingEndpoint = "https://api.cognitive.microsoft.com/bing/v7.0/search"
 
 //  curl "localhost:8080/api/search?term=thing"
 
@@ -39,29 +38,10 @@ func newSearchHandler(token string) echo.HandlerFunc {
 		}
 		// start making the request to Bing
 		// Declare a new GET request.
-		req, err := http.NewRequest("GET", bingEndpoint, nil)
-		if err != nil {
-			return newError(
-				ctx,
-				http.StatusInternalServerError,
-				"%s",
-				err,
-			)
-		}
-
-		// Add the payload to the request.
-		param := req.URL.Query()
-		param.Add("q", term)
-		req.URL.RawQuery = param.Encode()
-
-		// Insert the request header.
-		req.Header.Add("Ocp-Apim-Subscription-Key", token)
-
-		// Create a new client.
-		client := new(http.Client)
+		req, err := bing.NewRequest(bing.SearchEndpoint, term, token)
 
 		// Send the request to Bing.
-		resp, err := client.Do(req)
+		resp, err := bing.Client.Do(req)
 		if err != nil {
 			return newError(
 				ctx,
@@ -118,5 +98,67 @@ func newSearchHandler(token string) echo.HandlerFunc {
 		// }
 
 		return ctx.JSONPretty(http.StatusOK, results, "  ")
+	}
+}
+
+func newAutocompleteHandler(token string) echo.HandlerFunc {
+
+	return func(ctx echo.Context) error {
+		term := ctx.QueryParam("term")
+		if term == "" {
+			return newError(
+				ctx,
+				http.StatusBadRequest,
+				"No search term in query string",
+			)
+		}
+		req, err := bing.NewRequest(bing.AutosuggestEndpoint, term, token)
+		if err != nil {
+			return err
+		}
+
+		req.URL.Query().Add("q", term)
+
+		// Send the request to Bing.
+		resp, err := bing.Client.Do(req)
+		if err != nil {
+			return newError(
+				ctx,
+				http.StatusInternalServerError,
+				"%s",
+				err,
+			)
+		}
+
+		// Close the response.
+		defer resp.Body.Close()
+
+		autocompleteSuggestions := new(bing.Suggestions)
+		if err := json.NewDecoder(resp.Body).Decode(autocompleteSuggestions); err != nil {
+			return newError(
+				ctx,
+				http.StatusInternalServerError,
+				"%s",
+				err,
+			)
+		}
+
+		log.Printf("autocomplete suggestions: %+v", *autocompleteSuggestions)
+		webSuggestionGroup := new(bing.SuggestionGroup)
+		for _, suggestionGroup := range autocompleteSuggestions.SuggestionGroups {
+			if suggestionGroup.Name == "Web" {
+				*webSuggestionGroup = suggestionGroup
+				break
+			}
+		}
+		if webSuggestionGroup == nil {
+			return newError(
+				ctx,
+				http.StatusNotFound,
+				"no thing found. red alert!!",
+			)
+		}
+
+		return ctx.JSON(http.StatusOK, &webSuggestionGroup)
 	}
 }

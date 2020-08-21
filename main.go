@@ -12,12 +12,10 @@ import (
 )
 
 // for next time
-// - make a UI for all this stuff!
 // - caching the results for a few mins or something?
 // - maybe proactively getting search results in the background
 // - doing image, video, etc... search?
-// - deploy this to the actual internet
-//		- rate limiting will be needed
+//	- rate limiting will be needed
 // - WRITE OUR OWN CRAWLER!!!
 
 func main() {
@@ -60,19 +58,16 @@ func main() {
 	// - Need to "fingerprint" the JS and CSS files to
 	// 	ensure the browser doesn't cache them after I make
 	// 	a change
-	// - better styling
-	// - little spinner bar after you submit search, before
-	//	results are ready
 	// - autocomplete & typeahead suggestions!
 	// - duckduckgo search operators and "bangs"
 	//		- https://help.duckduckgo.com/duckduckgo-help-pages/results/syntax/
 	//		- https://duckduckgo.com/bang
 	// - maps & location support
+	//		- See this link for all the Bing APIs supported: https://docs.microsoft.com/en-us/rest/api/cognitiveservices-bingsearch/bing-autosuggest-api-v7-reference
 	// - duckduckgo-style (google/bing/etc... does it too) "smart sidebar"
 	//	tries to guess something quick that you want & puts it just
 	// 	to the right of the search results
-	// - build the image in ACR tasks and host it in ACR
-	// - Get a better DNS for the hostname (we have the ACI hostname now, and we have the front door gosearching.azurefd.net one)
+	// - build the docker image in ACR tasks and host it in ACR
 
 	// DONE
 	// - get a favicon (https://i.imgur.com/YbHs016.png courtesy rockerBO)
@@ -88,7 +83,10 @@ func main() {
 		})
 	})
 	g := e.Group("/api")
+	//  curl "localhost:8080/api/search?term=thing"
 	g.GET("/search", newSearchHandler(token))
+	//  curl "localhost:8080/api/autocomplete?term=thing"
+	g.GET("/autocomplete", newAutocompleteHandler(token))
 
 	// Start server
 	e.Logger.Fatal(e.Start(":8080"))
