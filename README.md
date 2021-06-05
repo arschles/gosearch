@@ -3,9 +3,9 @@ Search engine in Go
 
 Bing API Docs:
 
-- Go code sample: https://docs.microsoft.com/en-us/azure/cognitive-services/bing-web-search/quickstarts/go#handle-the-response
-- Overview page: https://docs.microsoft.com/en-us/azure/cognitive-services/bing-web-search/overview
-- Real time search: https://docs.microsoft.com/en-us/azure/cognitive-services/bing-autosuggest/get-suggested-search-terms
+- Go code sample: https://docs.microsoft.com/azure/cognitive-services/bing-web-search/quickstarts/go?WT.mc_id=opensource-0000-aaschles#handle-the-response
+- Overview page: https://docs.microsoft.com/azure/cognitive-services/bing-web-search/overview?WT.mc_id=opensource-0000-aaschles
+- Real time search: https://docs.microsoft.com/azure/cognitive-services/bing-autosuggest/get-suggested-search-terms?WT.mc_id=opensource-0000-aaschles
     - This is a TODO for later. Integrate it into the JS frontend and maybe do something with this on the server
     - 
     - 
